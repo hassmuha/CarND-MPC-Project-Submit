@@ -13,8 +13,8 @@ Self-Driving Car Engineer Nanodegree Program
 ---
 
 * Source Code can be found [here](https://github.com/hassmuha/CarND-MPC-Project-Submit/tree/master/src)
-* Compilation Result ./particle_filter can be found [here](https://github.com/hassmuha/CarND-MPC-Project-Submit/tree/master/build)
-* Video Clipping for the simulator results can be found [here](hhttps://github.com/hassmuha/CarND-MPC-Project-Submit/tree/master/Result)
+* Compilation Result ./mpc can be found [here](https://github.com/hassmuha/CarND-MPC-Project-Submit/tree/master/build)
+* Video Clipping for the simulator results can be found [here](https://github.com/hassmuha/CarND-MPC-Project-Submit/tree/master/Result)
 
 ---
 
