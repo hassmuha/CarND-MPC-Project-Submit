@@ -36,4 +36,4 @@ Moreover for the cost function (MPC.cpp:line59) different weights have been used
 
 * The solution to the 100ms latency for MPC has been catered for in line code MPC.cpp:line273. The idea is based on values of dt and sending the simulator the actuation commands on the predicted trajectory mapping to 100ms infront of car.
 
-* Final Result Video [here][clip4]
+* Final Result Video [here][clip1]
