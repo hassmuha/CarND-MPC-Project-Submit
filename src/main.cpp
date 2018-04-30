@@ -65,23 +65,7 @@ Eigen::VectorXd polyfit(Eigen::VectorXd xvals, Eigen::VectorXd yvals,
   return result;
 }
 
-// convert pos in map coordinate to car coordinate given car position carpos
-vector<double> map2car(vector<double> carpos, vector<double> pos){
 
-  double carx = carpos[0];
-  double cary = carpos[1];
-  double carpsi = carpos[2];
-
-  double x = pos[0];
-  double y = pos[1];
-
-
-  double x1 = (x - carx)*cos(carpsi) + (y-cary)*sin(carpsi);
-  double y1 = - (x - carx)*sin(carpsi) + (y-cary)*cos(carpsi);
-
-  vector<double> res = {x1,y1};
-  return res;
-}
 
 int main() {
   uWS::Hub h;
@@ -109,6 +93,8 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
+          //we will need to apply reflection factor for y-coordinate and psi,
+          //as y-coordinate becomes positive when moving top down in simulator
           py = -py;
           psi = -psi;
 
@@ -122,20 +108,17 @@ int main() {
           Eigen::VectorXd ptsx_eigen(ptsx.size());
           Eigen::VectorXd ptsy_eigen(ptsy.size());
 
-          // convert waypoints to car coordinate
+          // convert the waypoints to vehicle coordinate system
           vector<double> carpos = {px,py,psi};
           for(int i=0;i<ptsx.size();i++){
-            vector<double> posmap = {ptsx[i],-ptsy[i]};
-            vector<double> poscar = map2car(carpos,posmap);
-            ptsx_eigen[i] = poscar[0];
-            ptsy_eigen[i] = poscar[1];
-
+            double ptsy_i = -ptsy[i];
+            ptsx_eigen[i] = (ptsx[i] - px)*cos(psi) + (ptsy_i-py)*sin(psi);
+            ptsy_eigen[i] = - (ptsx[i] - px)*sin(psi) + (ptsy_i-py)*cos(psi);
           }
 
-          auto coeffs = polyfit(ptsx_eigen, ptsy_eigen, 3); // TODO : Make it 3rd order, check where the derivative has been used
+          auto coeffs = polyfit(ptsx_eigen, ptsy_eigen, 3);
 
-          // The cross track error is calculated by evaluating at polynomial at x, f(x)
-          // and subtracting y.
+          // The cross track error is calculated by evaluating at polynomial at x, f(x) and subtracting y.
           double cte = polyeval(coeffs, 0.0) - 0.0;
 
           // Due to the sign starting at 0, the orientation error is -f'(x).
@@ -147,19 +130,14 @@ int main() {
           state << 0, 0, 0, v, cte, epsi;
           auto vars = mpc.Solve(state, coeffs);
 
-
-
-
+          // calculate the speed and throttle value
+          // divide by deg2rad(25) to make the value between [-1, 1]
           double steer_value;
           double throttle_value;
-
-
           steer_value = vars[0]/deg2rad(25);
           throttle_value = vars[1];
 
           json msgJson;
-          // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
-          // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
           msgJson["steering_angle"] = steer_value;
           msgJson["throttle"] = throttle_value;
 
@@ -182,11 +160,6 @@ int main() {
 
           msgJson["mpc_x"] = mpc_x_vals;
           msgJson["mpc_y"] = mpc_y_vals;
-
-
-
-
-
 
           //Display the waypoints/reference line
           vector<double> next_x_vals;
