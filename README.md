@@ -26,7 +26,7 @@ The MPC Controller project has been developed in the same way as it was taught i
 state = [x, y, psi(car orientaiton) , v(velocity), cte(Cross Track Error), epsi(Orientation Error)].
 The kinematics Update model equation are ![alt text][image1]
 As we initially make the the psi negative before converting the waypoints to vehicle coordinate system (main.cpp:line99). Hence there is no need to change the psi update explained as shown in the tips of the equation. The relevant code can be found (MPC.cpp:line130)
-As an actuation commands, we have steering angle and throttle value. These values for each step is calculated by predicting trajectory in 3rd order equation along with minimizing the cost function. Actutor constraints has been added as well which are
+As an actuation commands, we have steering angle and throttle value. These values for each step is calculated by predicting trajectory in 3rd order equation along with minimizing the cost function. Actutor constraints have been added as well which are
 ![alt text][image2]
 
 * Final values of N (timestep length) and dt (elapsed duration between timesteps) selected are N = 25, dt = 0.05 respectively. Before that different combinations have been tried for example dt = 0.1 and 0.25 with same value of N. Moreover N has been changed to from 15 to 25 with discrete step of size 5. In all of the combination final selected combination works always better.  
